@@ -77,7 +77,7 @@ def process_fstab_line(line_num, line):
     return unit_file_name, device, mountpoint, fstype, options
 
 
-def fstab_to_systemd(fstab_file, unit_file_base):
+def fstab_to_systemd(fstab_file):
     """Converts selected lines from an fstab file to systemd unit files."""
     try:
         with open(fstab_file, "r") as f:
@@ -153,5 +153,4 @@ def get_selected_lines(fstab_lines):
 
 
 if __name__ == "__main__":
-    fstab_to_systemd("/etc/fstab", "fstab_mount")
-
+    fstab_to_systemd("/etc/fstab")

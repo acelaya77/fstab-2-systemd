@@ -40,10 +40,10 @@ This Python script helps automate the process of converting specific entries fro
 
 ## Usage
 
-1. **Run the script** with your desired fstab file and base unit name:
+1. **Run the script** with your desired fstab file:
 
    ```bash
-    python3 fstab_to_systemd.py /etc/fstab "fstab_mount"
+    python3 fstab_to_systemd.py /etc/fstab
    ```
 
 2. **Interactive Input**:
@@ -87,7 +87,7 @@ In the example above:
 - **Permission Errors**: If you encounter permission errors (e.g., `Permission denied`), make sure you have the necessary `sudo` privileges to create systemd unit files and modify `/etc/fstab`. You might need to run the script as an elevated user:
 
   ```bash
-  sudo python3 fstab_to_systemd.py /etc/fstab "fstab_mount"
+  sudo python3 fstab_to_systemd.py /etc/fstab
   ```
 
 - **No such file or directory**: Ensure that the fstab file and mount points are correct and exist in the system.
