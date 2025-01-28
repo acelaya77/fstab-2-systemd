@@ -21,8 +21,8 @@ This Python script helps automate the process of converting specific entries fro
 1. Clone the repository or download the script file:
 
    ```bash
-   git clone https://github.com/your-username/your-repo-name.git
-   cd your-repo-name
+   git clone https://github.com/acelaya77/fstab-2-systemd.git
+   cd fstab-2-systemd
    ```
 
 2. (Optional) Create a virtual environment and activate it:
