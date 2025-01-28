@@ -65,16 +65,16 @@ This Python script helps automate the process of converting specific entries fro
 
 Upon running the script, the following will happen:
 
-    ```bash
-    Found the following entries in fstab:
-    1: /dev/sda1 /mnt/data ext4 defaults 0 0
-    2: 192.168.1.100:/mnt/nfs /mnt/nfs nfs defaults 0 0
+```bash
+Found the following entries in fstab:
+1: /dev/sda1 /mnt/data ext4 defaults 0 0
+2: 192.168.1.100:/mnt/nfs /mnt/nfs nfs defaults 0 0
 
-    Enter line numbers or ranges to convert (comma-separated, or 'all'): 1
-    Created unit file: /etc/systemd/system/mnt-data.mount
-    Enabled unit: mnt-data.mount
-    Started unit: mnt-data.mount
-    ```
+Enter line numbers or ranges to convert (comma-separated, or 'all'): 1
+Created unit file: /etc/systemd/system/mnt-data.mount
+Enabled unit: mnt-data.mount
+Started unit: mnt-data.mount
+```
 
 In the example above:
 
