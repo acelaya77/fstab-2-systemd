@@ -65,21 +65,47 @@ def fstab_to_systemd(fstab_file, unit_file_base):
                     ["systemd-escape", "--suffix=mount", mountpoint], text=True
                 ).strip()
 
+                # Remove leading dash if it exists
+                if unit_file_name.startswith("-"):
+                    unit_file_name = unit_file_name[1:]
+
                 unit_file = os.path.join("/etc/systemd/system", f"{unit_file_name}")
 
-                with open(unit_file, "w") as f:
-                    f.write(f"# {unit_file_name}\n")
-                    f.write("[Unit]\n")
-                    f.write(f"Description=Mount from fstab (line {line_num})\n\n")
-                    f.write("[Mount]\n")
-                    f.write(f"What={device}\n")
-                    f.write(f"Where={mountpoint}\n")
-                    f.write(f"Type={fstype}\n")
-                    f.write(f"Options={options}\n\n")
-                    f.write("[Install]\n")
-                    f.write("WantedBy=local-fs.target\n")
+                # Use sudo to create the file in /etc/systemd/system
+                try:
+                    with open(unit_file, "w") as f:
+                        f.write(f"# {unit_file_name}\n\n")
+                        f.write("[Unit]\n")
+                        f.write(f"Description=Mount from fstab (line {line_num})\n\n")
+                        f.write("[Mount]\n")
+                        f.write(f"What={device}\n")
+                        f.write(f"Where={mountpoint}\n")
+                        f.write(f"Type={fstype}\n")
+                        f.write(f"Options={options}\n\n")
+                        f.write("[Install]\n")
+                        f.write("WantedBy=local-fs.target\n")
 
-                print(f"Created unit file: {unit_file}")
+                    print(f"Created unit file: {unit_file}")
+                except PermissionError:
+                    print(f"Error: Permission denied to write to {unit_file}.")
+                    print("You may need to run the script with sudo.")
+                    return
+
+                # Enable and start the unit
+                try:
+                    # Enable the unit (with sudo)
+                    subprocess.run(
+                        ["sudo", "systemctl", "enable", unit_file_name], check=True
+                    )
+                    print(f"Enabled unit: {unit_file_name}")
+
+                    # Start the unit (with sudo)
+                    subprocess.run(
+                        ["sudo", "systemctl", "start", unit_file_name], check=True
+                    )
+                    print(f"Started unit: {unit_file_name}")
+                except subprocess.CalledProcessError as e:
+                    print(f"Error enabling or starting {unit_file_name}: {e}")
 
                 # Comment the used line in fstab
                 fstab_lines[line_num - 1] = f"# {line}"
@@ -91,10 +117,16 @@ def fstab_to_systemd(fstab_file, unit_file_base):
         else:
             print(f"Warning: Invalid line number: {line_num}")
 
-    # Write the modified fstab back to the file
-    with open(fstab_file, "w") as f:
-        f.writelines(fstab_lines)
+    # Write the modified fstab back to the file with sudo
+    try:
+        with open(fstab_file, "w") as f:
+            f.writelines(fstab_lines)
+    except PermissionError:
+        print(f"Error: Permission denied to write to {fstab_file}.")
+        print("You may need to run the script with sudo.")
+        return
 
 
 if __name__ == "__main__":
     fstab_to_systemd("/etc/fstab", "fstab_mount")
+
