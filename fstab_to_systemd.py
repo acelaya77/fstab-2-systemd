@@ -76,14 +76,17 @@ def fstab_to_systemd(fstab_file, unit_file_base):
                     with open(unit_file, "w") as f:
                         f.write(f"# {unit_file_name}\n\n")
                         f.write("[Unit]\n")
-                        f.write(f"Description=Mount from fstab (line {line_num})\n\n")
+                        f.write(f"Description=Mount from fstab (line {line_num})\n")
+                        f.write("After=network.target\n\n")
                         f.write("[Mount]\n")
                         f.write(f"What={device}\n")
                         f.write(f"Where={mountpoint}\n")
                         f.write(f"Type={fstype}\n")
-                        f.write(f"Options={options}\n\n")
+                        f.write(f"Options={options}\n")
+                        f.write("TimeoutSec=15\n")
+                        f.write(f"ExecStartPre=/bin/mkdir -p {mountpoint}\n\n")
                         f.write("[Install]\n")
-                        f.write("WantedBy=local-fs.target\n")
+                        f.write("WantedBy=multi-user.target\n")
 
                     print(f"Created unit file: {unit_file}")
                 except PermissionError:
@@ -129,4 +132,3 @@ def fstab_to_systemd(fstab_file, unit_file_base):
 
 if __name__ == "__main__":
     fstab_to_systemd("/etc/fstab", "fstab_mount")
-
